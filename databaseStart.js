@@ -1,4 +1,5 @@
 const mongoose      = require('mongoose');
+mongoose.set('useCreateIndex', true);
 mongoose.Promise    = global.Promise;
 
 const mongoDB       = 'mongodb+srv://bacco:666666yu@bacco-d4de0.mongodb.net/test?retryWrites=true&w=majority'
