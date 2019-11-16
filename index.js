@@ -1,24 +1,23 @@
-const express       = require("express");
-const mongoose      = require("mongoose");
+const express       = require('express')
+const mongoose      = require('mongoose');
+mongoose.set('useCreateIndex', true);
 mongoose.Promise    = global.Promise;
 
-const cron          = require("node-cron");
-const env           = process.env.NODE_ENV || "development";
-const config        = require("./config")[env];
+const cron          = require('node-cron');
+const env           = process.env.NODE_ENV || 'development';
+const config        = require('./config')[env];
+require('./databaseStart')(config);
 
-const Coin          = require("./Coin");
-
-const CoinMarketCap = require("coinmarketcap-api");
-const apiKey        = "33164b66-ea5f-43cb-89c1-24f56339d005";
+const Coin          = require('./Coin');
+const CoinMarketCap = require('coinmarketcap-api');
+const apiKey        = '33164b66-ea5f-43cb-89c1-24f56339d005';
 const client        = new CoinMarketCap(apiKey);
 
-require("./databaseStart")(config);
 
 const app = express();
 
-let counter = 1;
 
-cron.schedule('*/5 * * * *' , () => {        //  '*/5 * * * *'  '*/10 * * * * *'
+cron.schedule( '*/5 * * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * * * * *'
 
     client.getTickers()
         .then((incomingParams) => {
@@ -27,9 +26,7 @@ cron.schedule('*/5 * * * *' , () => {        //  '*/5 * * * *'  '*/10 * * * * *'
             let dataArray = incomingParams.data;
             let numberId  = 0;
 
-
             dataArray.forEach( element => {
-
 
                 let quote = (dataArray[numberId].quote).USD;
                 
@@ -45,62 +42,74 @@ cron.schedule('*/5 * * * *' , () => {        //  '*/5 * * * *'  '*/10 * * * * *'
                 let price_time          =  { time, price };
 
 // Update every coin
-
-               try {
+                try {
                     Coin.updateOne({
-                        symbol,
-                        name 
-                    }, {
-                        $push: {
-                            price_time,
-                            market_cap,
-                            volume_24h,
-                            circulating_supply,
-                            percent_change_24h
-                        }
-                    })
-                    .then()
-                    .catch( (err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                    })
-               } catch (err) {
-                   console.log(err)
-               }
+                            symbol,
+                            name
+                        }, {
+                            $push: {
+                                price_time,
+                                market_cap,
+                                volume_24h,
+                                circulating_supply,
+                                percent_change_24h
+                            }
+                        })
+                        .then()
+                        .catch((err) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                        })
+                } catch (err) {
+                    console.log(err)
+                }
                 numberId++;
-            });
-        })
-        .catch(console.error);
-
-        console.log(counter);
-
-// Delete oldest element from the all arrays. No more than 300 elements per array
-        try {
-            if ( counter > 298 ) { 
-        
-                Coin.updateMany( {}, {
-                    $pop: {
-                        price_time         : -1,
-                        market_cap         : -1,
-                        volume_24h         : -1,
-                        circulating_supply : -1,
-                        percent_change_24h : -1
-                    }
-                })
-                .then()
-                .catch( (err) => {
-    
-                    if (err) {
-                        console.log(err);
-                    }
                 });
-            } else {
-                counter++;
-            }
-        } catch (err) {
-            console.log(err)
-        }
+                })
+                .catch(console.error);
+
+// Delete oldest element from the all arrays...
+
+                try {
+
+// No more than 2 elements per array
+                    Coin.updateMany( { "market_cap.1": { $exists: 1 }}, 
+                        {
+                            $pop: {
+                                market_cap: -1,
+                                volume_24h: -1,
+                                circulating_supply: -1,
+                                percent_change_24h: -1
+                            }
+                        }, { "multi": true })
+                        .then()
+                        .catch((err) => {
+
+                            if (err) {
+                                console.log(err);
+                            }
+                        });
+
+// No more than 288 elements per array (data for the Chart)
+                    Coin.updateOne({ "price_time.287": { $exists: 1 }}, // 287 (288) last 24h (5min x 12 x 24)
+                        {
+                            $pop: {
+                                price_time: -1,
+                            }
+                        }, { "multi": true })
+                        .then()
+                        .catch((err) => {
+
+                            if (err) {
+                                console.log(err);
+                            }
+                        });
+
+
+                } catch (err) {
+                    console.log(err)
+                }
 });
 
 // app.listen(config.port, () => 
