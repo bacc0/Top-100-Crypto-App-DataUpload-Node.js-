@@ -26,46 +26,46 @@ cron.schedule( '*/5 * * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * * *
             let dataArray = incomingParams.data;
             let numberId  = 0;
 
-            dataArray.forEach( element => {
+                dataArray.forEach( element => {
 
-                let quote = (dataArray[numberId].quote).USD;
-                
-                let name                =  dataArray[numberId].name;
-                let symbol              =  dataArray[numberId].symbol;
-                let market_cap          =  quote.market_cap;
-                let volume_24h          =  quote.volume_24h;
-                let circulating_supply  =  dataArray[numberId].circulating_supply;
-                let percent_change_24h  =  quote.percent_change_24h;
+                    let quote = (dataArray[numberId].quote).USD;
+                    
+                    let name                =  dataArray[numberId].name;
+                    let symbol              =  dataArray[numberId].symbol;
+                    let market_cap          =  quote.market_cap;
+                    let volume_24h          =  quote.volume_24h;
+                    let circulating_supply  =  dataArray[numberId].circulating_supply;
+                    let percent_change_24h  =  quote.percent_change_24h;
 
-                let time                =  new Date();
-                let price               =  quote.price;
-                let price_time          =  { time, price };
+                    let time                =  new Date();
+                    let price               =  quote.price;
+                    let price_time          =  { time, price };
 
 // Update every coin
-                try {
-                    Coin.updateOne({
-                            symbol,
-                            name
-                        }, {
-                            $push: {
-                                price_time,
-                                market_cap,
-                                volume_24h,
-                                circulating_supply,
-                                percent_change_24h
-                            }
-                        })
-                        .then()
-                        .catch((err) => {
-                            if (err) {
-                                console.log(err);
-                            }
-                        })
-                } catch (err) {
-                    console.log(err)
-                }
-                numberId++;
-                });
+                    try {
+                        Coin.updateOne({
+                                symbol,
+                                name
+                            }, {
+                                $push: {
+                                    price_time,
+                                    market_cap,
+                                    volume_24h,
+                                    circulating_supply,
+                                    percent_change_24h
+                                }
+                            })
+                            .then()
+                            .catch((err) => {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            })
+                    } catch (err) {
+                        console.log(err)
+                    }
+                    numberId++;
+                    });
                 })
                 .catch(console.error);
 
@@ -77,8 +77,8 @@ cron.schedule( '*/5 * * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * * *
                     Coin.updateMany( { "market_cap.1": { $exists: 1 }}, 
                         {
                             $pop: {
-                                market_cap: -1,
-                                volume_24h: -1,
+                                market_cap        : -1,
+                                volume_24h        : -1,
                                 circulating_supply: -1,
                                 percent_change_24h: -1
                             }
