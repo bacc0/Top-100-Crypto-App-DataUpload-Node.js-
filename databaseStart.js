@@ -1,12 +1,13 @@
 const mongoose      = require('mongoose');
-mongoose.set('useCreateIndex', true);
 mongoose.Promise    = global.Promise;
 
+// const mongoDB       = 'mongodb://localhost:27017/crypto-DB'
 const mongoDB       = 'mongodb+srv://bacco:666666yu@bacco-d4de0.mongodb.net/test?retryWrites=true&w=majority'
+
 
 const Coin          = require('./Coin');
 const CoinMarketCap = require('coinmarketcap-api');
-const apiKey        = '33164b66-ea5f-43cb-89c1-24f56339d005';
+const apiKey        = '50d5da7a-1069-4024-861a-ceaf1ce390ec' // '75b6108b-928a-46b5-95fa-ef91e5266e4e';
 const client        = new CoinMarketCap(apiKey);
 
 

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 
 const coinSchema = new mongoose.Schema({
-      
+      // git commit -am "make it better"
       id: {
             type: mongoose.Schema.Types.Number,
             required: true
@@ -27,6 +27,11 @@ const coinSchema = new mongoose.Schema({
       percent_change_24h: [{
             type: mongoose.Schema.Types.Decimal128,
       }],
+
+      price: [{
+            type: mongoose.Schema.Types.Decimal128,
+      }],
+      
       price_time: [{
             type: mongoose.Schema.Types.Mixed,
       }]
