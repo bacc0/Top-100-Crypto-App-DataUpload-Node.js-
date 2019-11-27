@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 
 const coinSchema = new mongoose.Schema({
-      // git commit -am "make it better"
+      
       id: {
             type: mongoose.Schema.Types.Number,
             required: true

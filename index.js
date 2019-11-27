@@ -37,9 +37,7 @@ cron.schedule( '*/5 * * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * * *
                     let circulating_supply  =  dataArray[numberId].circulating_supply;
                     let percent_change_24h  =  quote.percent_change_24h;
 
-                    // let time                =  new Date();
                     let price               =  quote.price;
-                    // let price_time          =  { time, price };
 
 // Update every coin
                     try {
@@ -48,7 +46,6 @@ cron.schedule( '*/5 * * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * * *
                                 name
                             }, {
                                 $push: {
-                                    // price_time,
                                     price,
                                     market_cap,
                                     volume_24h,
@@ -71,7 +68,6 @@ cron.schedule( '*/5 * * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * * *
                 .catch(console.error);
 
 // Delete oldest element from the all arrays...
-
                 try {
 
 // No more than 2 elements per array
@@ -93,40 +89,10 @@ cron.schedule( '*/5 * * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * * *
                             }
                         });
 
-// No more than 288 elements per array (data for the Chart)
-
-                    // Coin.updateOne({ "price_time.287": { $exists: 1 }}, // 287 (288) last 24h (5min x 12 x 24)
-                    //     {
-                    //         $pop: {
-                    //             price_time: -1,
-                    //         }
-                    //     }, { "multi": true })
-
-                        // Coin.updateMany(
-                        //     { "price_time.287": { "$exists": 1 } },
-                        //     { "$push": { "price_time": { "$each": [], "$slice": -287 } } },
-                        //     { "multi": true }
-                        // )
-                        // .then()
-                        // .catch((err) => {
-
-                        //     if (err) {
-                        //         console.log(err);
-                        //     }
-                        // });
-
-
                 } catch (err) {
                     console.log(err)
                 }
 });
-
-
-
-
-
-
-
 
 cron.schedule( '0 0 */6 * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * * * * *'  // at ( 0 seconds, 0 minutes every 6td )hour
        console.log("6h")                                                      
@@ -161,10 +127,6 @@ cron.schedule( '0 0 */6 * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * *
                             }, {
                                 $push: {
                                      price_time,
-                                    // market_cap,
-                                    // volume_24h,
-                                    // circulating_supply,
-                                    // percent_change_24h
                                 }
                             })
                             .then()
@@ -184,34 +146,6 @@ cron.schedule( '0 0 */6 * * *' , () => { //  interval   '*/5 * * * *'  '*/10 * *
 // Delete oldest element from the all arrays...
 
                 try {
-
-// No more than 2 elements per array
-                    // Coin.updateMany( { "market_cap.1": { $exists: 1 }}, 
-                    //     {
-                    //         $pop: {
-                    //             market_cap        : -1,
-                    //             volume_24h        : -1,
-                    //             circulating_supply: -1,
-                    //             percent_change_24h: -1
-                    //         }
-                    //     }, { "multi": true })
-                    //     .then()
-                    //     .catch((err) => {
-
-                    //         if (err) {
-                    //             console.log(err);
-                    //         }
-                    //     });
-
-// No more than 288 elements per array (data for the Chart)
-
-                    // Coin.updateOne({ "price_time.287": { $exists: 1 }}, // 287 (288) last 24h (5min x 12 x 24)
-                    //     {
-                    //         $pop: {
-                    //             price_time: -1,
-                    //         }
-                    //     }, { "multi": true })
-
                         Coin.updateMany(
                             { "price_time.28": { "$exists": 1 } },
                             { "$push": { "price_time": { "$each": [], "$slice": -28 } } },
